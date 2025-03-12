@@ -1,0 +1,84 @@
+.light{
+    background-color:  white;
+    color: black;
+}
+.dark{
+    background-color:  hsl(243, 91%, 8%);
+    color: rgb(222, 233, 243);
+}
+input{
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: transparent;
+}
+select{
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 2px solid #d1bfbf;
+    border-radius: 4px;
+}
+button{
+    padding: 5px 20px;
+    margin: 10px 0;
+    cursor: pointer;
+    border: 2px solid hsla(162, 37%, 81%, 0.678);
+    border-radius: 25px;
+}
+textarea{
+    width: 100%;
+    padding: 10px;
+    margin: 10px 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: transparent;
+}
+
+.rounded-bottom{
+    border-radius: 0 0 20px 20px;
+}
+
+select{
+    background-color:  transparent;
+}
+option{
+    background: transparent;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 10vh;
+    position: sticky;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px); 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    margin: 20px;
+}
+
+.navbar a {
+    padding: 10px;
+    border-radius: 10px;
+    transition: background 0.3s ease;
+}
+.navbar a:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+.size-6 {
+    width: 24px;
+    height: 24px;
+}
+.profile-pic-size{
+    height: 200px;
+    width: 200px;
+}
+.bg-blue{
+    background-color: hsl(180, 100%, 50%);
+}
