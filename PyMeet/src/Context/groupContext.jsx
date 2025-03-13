@@ -75,4 +75,4 @@ const GroupProvider = ({ children }) => {
     )
 }
 
-export default GroupProvider;
+export {GroupContext, GroupProvider};

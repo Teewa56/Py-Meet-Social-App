@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from "react-router-dom";
 import { AuthContext } from "./Context/AuthContext";
+import { PostProvider } from './Context/postContext.jsx';
 import Navbar from './Components/navbar';
 import AboutPage from './Pages/LoggedInPages/AboutPage';
 import ChatsGroupsPage from './Pages/LoggedInPages/ChatsGroupsPage';
@@ -94,7 +95,7 @@ const AppContent = () => {
                 <Route path="/groups/new" element={<ProtectedRoute><NewGroup /> </ProtectedRoute>} />
                 <Route path="/groups/:groupId" element={<ProtectedRoute><GroupChat /> </ProtectedRoute>} />
                 <Route path="/groups/:groupId/edit" element={<ProtectedRoute><EditGroup /> </ProtectedRoute>} />
-                <Router path="/Notification" element={<ProtectedRoute><Notification /></ProtectedRoute> } />
+                <Route path="/Notification" element={<ProtectedRoute><Notification /></ProtectedRoute> } />
                 <Route path="*" element={<PageError />} />
             </Routes>
             {user && showNavbar && <Navbar />}
@@ -105,7 +106,9 @@ const AppContent = () => {
 function App() {
     return (
         <Router>
-            <AppContent />
+            <PostProvider>
+                <AppContent />
+            </PostProvider>
         </Router>
     );
 }

@@ -4,19 +4,19 @@ import App from './App.jsx'
 import { AuthProvider } from './Context/AuthContext.jsx';
 import { ThemeProvider } from './Context/ThemeContext.jsx';
 import { UserProvider } from './Context/userContext.jsx';
-import { PostProvider } from './Context/postContext.jsx';
 import { CommentProvider } from './Context/commentContext.jsx';
+import ErrorBoundary from './Pages/ErrorPages/ErrorBoundary.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <UserProvider>
       <AuthProvider>
         <ThemeProvider>
-          <PostProvider>
             <CommentProvider>
-              <App />
-            </CommentProvider >  
-          </PostProvider>
+              <ErrorBoundary>
+                <App />
+              </ErrorBoundary>
+            </CommentProvider >
         </ThemeProvider>
       </AuthProvider>
     </UserProvider>

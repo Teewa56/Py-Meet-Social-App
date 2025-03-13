@@ -1,8 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
-import { ChatContext } from '../Context/ChatContext';
+import { ChatContext } from '../../Context/chatContext';
 import UsersList from '../../Components/UsersList';
 import Chat from './Chat';
-import socket from '../../Services/socket.io-client';
 
 const ChatsGroupPage = () => {
   const [selectedUser, setSelectedUser] = useState(null);
@@ -14,19 +13,6 @@ const ChatsGroupPage = () => {
     // Load initial data
     loadRecentChats();
     
-    // Set up socket listeners
-    socket.on("updateActiveUsers", (users) => {
-      setActiveUsers(users);
-    });
-    
-    socket.on("receiveMessage", (message) => {
-      setMessages(prev => [...prev, message]);
-    });
-    
-    return () => {
-      socket.off("updateActiveUsers");
-      socket.off("receiveMessage");
-    };
   }, []);
   
   const loadRecentChats = async () => {

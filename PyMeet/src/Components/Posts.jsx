@@ -14,8 +14,7 @@ const Posts = () =>{
             setLoading(true);
             try {
                 const res = await allPosts();
-                const data = res.json();
-                setposts(data);
+                setposts(res.data);
             } catch (error) {
                 console.log(error);
             }finally{
@@ -30,11 +29,11 @@ const Posts = () =>{
     return(
         <>
             <div>
-                {posts ? 
+                {posts.length !== 0 ? 
                 ( <div>
-                    {posts.map((post, _id) => (
-                        <div key={_id}>
-                            <Link to={`/PostPage/${(_id)}`} >
+                    {posts.map((post) => (
+                        <div key={post._id}>
+                            <Link to={`/PostPage/${(post._id)}`} >
                                 <Post post={post} />
                             </Link>
                         </div>

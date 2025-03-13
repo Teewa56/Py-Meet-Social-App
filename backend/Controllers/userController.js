@@ -3,9 +3,9 @@ const User = require('../Models/userModel');
 const userctrl = {
     searchUser: async (req, res) => {
         try {
-            const users = await User.find({ username: { $regex: req.params.query, $options: 'i' } })
+            const users = await User.find({ userName: { $regex: req.query.query, $options: 'i' } })
                 .limit(10)
-                .select("firstName lastName username profilePic");
+                .select("_id firstName lastName userName profilePic");
             res.json({ users });
         } catch (error) {
             res.status(500).json({ msg: error.message });
@@ -13,7 +13,8 @@ const userctrl = {
     },
     followUser: async (req, res) => {
         try {
-            const { userId, followId } = req.body;
+            const { followId } = req.params;
+            const { userId } = req.body;
             const user = await User.findById(userId);
             const followUser = await User.findById(followId);
 
@@ -38,7 +39,8 @@ const userctrl = {
     },
     unfollowUser: async (req, res) => {
         try {
-            const { userId, unfollowId } = req.body;
+            const { userId } = req.body;
+            const { unfollowId } = req.params;
             const user = await User.findById(userId);
             const unfollowUser = await User.findById(unfollowId);
 
@@ -75,34 +77,12 @@ const userctrl = {
     },
     getUserProfile: async (req, res) => {
         try {
-            const userId = req.params.userId;            
+            const userId = req.params.userId; 
             const user = await User.findById(userId);
             if (!user) {
                 return res.status(404).json({ msg: 'User not found' });
             }
-            res.json({ user });
-        } catch (error) {
-            res.status(500).json({ msg: error.message });
-        }
-    },
-    getLikedPosts : async(req, res) => {
-        try {
-            const  userId  = req.params.userId;
-            const user = User.findById(userId);
-            if(!user) return res.status(400).json({ msg : "user doesnt exist"});
-            const userLikedPosts = user.likedPosts;
-            res.json({ userLikedPosts })
-        } catch (error) {
-            res.status(500).json({ msg: error.message });
-        }
-    },
-    getPosts : async(req, res) => {
-        try {
-            const userId = req.params.userId;
-            const user = User.findById(userId);
-            if(!user) return res.status(400).json({ msg : "user doesnt exist"});
-            const userPosts = user.posts;
-            res.json({ userPosts });
+            res.json( user );
         } catch (error) {
             res.status(500).json({ msg: error.message });
         }

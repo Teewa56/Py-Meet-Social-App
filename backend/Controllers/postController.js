@@ -120,7 +120,7 @@ const postController = {
     },
     getAllPosts : async(req, res) => {
         try {
-            const allPosts = Post.find({});
+            const allPosts =await  Post.find({});
             res.json({allPosts});
         } catch (error) {
             res.status(500).json({ msg : error.message});

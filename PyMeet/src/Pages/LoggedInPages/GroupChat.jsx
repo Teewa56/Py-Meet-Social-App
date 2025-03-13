@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import { GroupContext } from '../context/GroupContext';
-import socket from '../../Services/socket.io-client';
+import { GroupContext } from '../../Context/groupContext';
+import { socket, sendGroupMessage } from '../../Services/socket.io-client';
 
 const GroupChat = () => {
   const { groupId } = useParams();

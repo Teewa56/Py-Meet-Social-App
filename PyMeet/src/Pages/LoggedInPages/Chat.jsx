@@ -1,8 +1,8 @@
 // ChatWindow.jsx - Component to display and send messages
 import { useState, useRef, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
-import { ChatContext } from '../Context/ChatContext';
-import socket from '../../Services/socket.io-client';
+import { ChatContext } from '../../Context/chatContext';
+import { socket, sendMessage } from '../../Services/socket.io-client';
 
 const Chat = ({ selectedUser, messages, setMessages }) => {
   const [newMessage, setNewMessage] = useState('');

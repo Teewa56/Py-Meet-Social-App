@@ -76,8 +76,8 @@ option{
     height: 24px;
 }
 .profile-pic-size{
-    height: 200px;
-    width: 200px;
+    height: 150px;
+    width: 150px;
 }
 .bg-blue{
     background-color: hsl(180, 100%, 50%);

@@ -39,14 +39,12 @@ export const editProfile = (data) => {
 };
 
 // user routes
-export const searchUser = (query) => api.get(`/search/${query}`, { params: { query } });
-export const followUser = (userId, followId) => api.post(`/follow/${followId}`, { userId });
+export const searchUser = (query) => api.get(`/search/`, { params: { query } });
+export const followUser = (userId, followId) => api.post(`/follow/${followId}`, { userId }); 
 export const unfollowUser = (userId, unfollowId) => api.post(`/unfollow/${unfollowId}`, { userId });
-export const getFollowing = (userId) => api.get(`/${userId}/following`, { params: { userId } });
-export const getFollowers = (userId) => api.get(`/${userId}/followers`, { params: { userId } });
-export const getUserProfile = (userId) => api.get(`/${userId}/profile`, { params: { userId } });
-export const getUserLikedPosts = (userId) => api.get(`/${userId}/likedPosts`, { params : {userId} });
-export const getUserPosts = (userId) => api.get(`/${userId}/Posts`, { params : {userId} });
+export const getFollowing = (userId) => api.get(`/following/${userId}`, { params: { userId } });
+export const getFollowers = (userId) => api.get(`/followers/${userId}`, { params: { userId } });
+export const getUserProfile = (userId) => api.get(`/profile/${userId}`, { params: { userId } });
 
 // image upload
 export const uploadImage = async (file) => {
@@ -91,7 +89,7 @@ export const deleteGroup = (deleterId, groupId) => api.delete(`/deleteGroup/${gr
 
 //notificationroutes
 export const createNotification = (data) => api.post('/create', data);
-export const getNotification = (userId) => api.get(`/get/${userId}`, {params : {userId}});
+export const getNotifications = (userId) => api.get(`/get/${userId}`, {params : {userId}});
 export const markNotification = (id) => api.put(`/markAsRead/${id}`, {params : {id}});
 export const deleteNotification = (id) => api.delete(`/delete/${id}`, {params : {id}});
 export const getUnread = (userId) => api.get(`/getUnread/${userId}`, {params : {userId}});

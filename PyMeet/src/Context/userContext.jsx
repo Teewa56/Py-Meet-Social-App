@@ -33,8 +33,8 @@ const UserProvider = ({ children }) => {
         }
     };
 
-    const updateStoredUser = async (userProfile) => {
-        await localStorage.setItem('user', JSON.stringify(userProfile));
+    const updateStoredUser = (userProfile) => {
+        localStorage.setItem('user', JSON.stringify(userProfile));
     }
 
     const searchaUser = async (query) => {
@@ -42,7 +42,7 @@ const UserProvider = ({ children }) => {
         try{
             const res = await searchUserApi(query);
             setLoading(false);
-            return res.data;
+            return res;
         }catch(error){
             setError(error.message);
             setLoading(false);
@@ -54,7 +54,7 @@ const UserProvider = ({ children }) => {
         try{
             const res = await followUser(userId, followId);
             setLoading(false);
-            return res.data;
+            return res;
         } catch(error){
             setError(error.response.data.msg);
             setLoading(false);
@@ -66,15 +66,12 @@ const UserProvider = ({ children }) => {
         try{
             const res = await unfollowUser(userId, unfollowId);
             setLoading(false);
-            return res.data;
+            return res;
         }catch(error){
             setError(error.message);
             setLoading(false);
         }
     };
-
-    //getliked posts from api
-    //get userposts from api 
 
     return (
         <UserContext.Provider 

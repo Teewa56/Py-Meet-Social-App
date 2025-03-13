@@ -4,8 +4,8 @@ const cors = require('cors');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const rateLimit = require('express-rate-limit');
-const http = require('http'); // Required for creating an HTTP server
-const socket = require('./Socket.Io'); // Your custom Socket.IO logic
+const http = require('http'); 
+const socket = require('./Socket.Io'); 
 
 const authRoutes = require('./Routes/authRoutes');
 const userRoutes = require('./Routes/userRoutes');
@@ -46,10 +46,9 @@ app.use('/api', chatRoutes);
 app.use('/api', groupRoutes);
 app.use('/api', notificationRoutes);
 
-// Database Connection & Server Start
 connectDB().then(() => {
     const port = 3000;
-    server.listen(port, () => { // Use `server.listen` instead of `app.listen`
+    server.listen(port, () => {
         console.log(`SERVER IS RUNNING ON PORT ${port}`);
     });
 }).catch((error) => {

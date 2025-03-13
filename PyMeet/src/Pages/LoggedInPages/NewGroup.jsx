@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useContext } from "react";
-import { GroupContext } from "../context/GroupContext";
-import BackButton from "../Components/BackButton";
-import SelectedMembers from "../Components/SelectedMembers";
+import { GroupContext } from "../../Context/groupContext";
+import BackButton from "../../Components/BackButton";
+import SelectedMembers from "../../Components/SelectedMembers";
 
 const NewGroup = () => {
     const { CreateGroup, error: contextError, loading } = useContext(GroupContext);

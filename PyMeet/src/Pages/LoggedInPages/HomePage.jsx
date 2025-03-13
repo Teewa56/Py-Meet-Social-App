@@ -4,13 +4,13 @@ import Posts from "../../Components/Posts";
 
 const HomePage = () => {
     const [userName, setUserName] = useState("");
-    const [profilePic, setProfilePic] = useState("/images/Intro2.jpg");
+    const [profilePic, setProfilePic] = useState("/images/Avatar.png");
     const navigate = useNavigate();
 
     useEffect(() => {
         const active_user = JSON.parse(localStorage.getItem('user'));
-        setUserName(active_user.userName);
-        setProfilePic(active_user.profilePic || "/images/Intro2.jpg");
+        setUserName(active_user.userName || active_user.user.userName);
+        setProfilePic(active_user.user.profilePic || "/images/Avatar.png");
     }, []);
 
     const handleNavigate = () => {

@@ -1,6 +1,6 @@
-const Group = require('../Model/groupModel');
-const Chat = require('../Model/chatModel');
-const User = require('../Models/userController');
+const Group = require('../Models/groupModel');
+const Chat = require('../Models/chatModel');
+const User = require('../Models/userModel');
 
 // Create a new group
 exports.createGroup = async (req, res) => {

@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import {
   getNotifications,
-  markNotificationAsRead,
+  markNotification,
   deleteNotification,
 } from "../Services/api"; 
 import { socket, sendNotification } from "../Services/socket.io-client"; 
@@ -41,7 +41,7 @@ const NotificationProvider = ({ children }) => {
   // Mark a notification as read
   const markAsRead = async (id) => {
     try {
-      await markNotificationAsRead(id);
+      await markNotification(id);
       setNotifications((prev) =>
         prev.map((n) => (n._id === id ? { ...n, read: true } : n))
       );

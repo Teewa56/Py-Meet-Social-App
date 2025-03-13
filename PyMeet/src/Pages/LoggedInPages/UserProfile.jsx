@@ -2,16 +2,31 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Loading from "../../Components/Loading";
 import NewPostBtn from "../../Components/AddNewPostButton";
+import { getUserProfile } from "../../Services/api";
 
 const UserProfile = () => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-
+    const userId = JSON.parse(localStorage.getItem("user"))._id || JSON.parse(localStorage.getItem("user")).user._id;
     useEffect(() => {
         const storedUser = JSON.parse(localStorage.getItem('user'));
         setUser(storedUser.user || storedUser);
         setLoading(false);
     },[]);
+
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            try {
+                const res = await getUserProfile(userId);
+                setUser(res.data); // Update state
+                localStorage.setItem("user", JSON.stringify(res.data)); 
+            } catch (error) {
+                console.error(error.message);
+            }
+        };
+        fetchUserProfile();
+    }, [userId]); // Runs whenever userId changes
+    
 
     if (loading) return <div className="h-screen"><Loading /></div>;
     
@@ -26,10 +41,10 @@ const UserProfile = () => {
             <NewPostBtn />
             <div className="relative">
                 <div className="w-full h-60 rounded-b-lg overflow-hidden">
-                    <img src={user.coverPic || "/images/PyMeet-Logo.jpg"} alt="Cover" className="w-full h-full object-cover" />
+                    <img src={user.coverPic || "/images/Avatar.png"} alt="Cover" className="w-full h-full object-cover" />
                 </div>
                 <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 p-2 mb-10">
-                    <img src={user.profilePic || "/images/Intro2.jpg"} alt="Profile" className="profile-pic-size rounded-full border-4 border-white" />
+                    <img src={user.profilePic || "/images/Avatar.png"} alt="Profile" className="profile-pic-size rounded-full border-4 border-white" />
                 </div>
             </div>
 
@@ -82,6 +97,11 @@ const UserProfile = () => {
 
                         <div className="mt-8">
                             <h3 className="text-xl font-semibold">Posts</h3>
+                            {/* Render user posts here */}
+                        </div>
+
+                        <div className="mt-8">
+                            <h3 className="text-xl font-semibold">Liked Posts</h3>
                             {/* Render user posts here */}
                         </div>
                     </div>
