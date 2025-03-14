@@ -2,9 +2,10 @@ const commentCtrl = require("../Controllers/commentController");
 const router = require('express').Router();
 
 router.post('/:postId/makeComment', commentCtrl.makeComment);
-router.post('/likeComment/:commentId', commentCtrl.likeComment)
-router.post('/unlikeComment/:commentId', commentCtrl.unlikeComment);
-router.delete('/deleteComment/:commentId', commentCtrl.deleteComment);
-router.put('/editComment/:commentId', commentCtrl.editComment);
+router.post('/:commentId/likeComment', commentCtrl.likeComment)
+router.post('/:commentId/unlikeComment', commentCtrl.unlikeComment);
+router.delete('/:commentId/deleteComment', commentCtrl.deleteComment);
+router.put('/:commentId/editComment', commentCtrl.editComment);
+router.get('/:commentId/getComment', commentCtrl.getCommentById);
 
 module.exports = router;

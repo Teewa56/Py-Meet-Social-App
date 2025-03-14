@@ -65,7 +65,7 @@ const UserProfile = () => {
                             <p className="text-gray-600">Following</p>
                         </div>
                         <div className="text-center">
-                            <p className="text-lg font-semibold">300</p>
+                            <p className="text-lg font-semibold">{user.posts?.length || 0}</p>
                             <p className="text-gray-600">Posts</p>
                         </div>
                     </div>
@@ -93,16 +93,6 @@ const UserProfile = () => {
                             <p className="text-gray-600">Occupation: {user.occupation || ''}</p>
                             <p className="text-gray-600">Bio: {user.bio || ''}</p>
                             <p className="text-gray-600">Region: {user.region || ''}</p>
-                        </div>
-
-                        <div className="mt-8">
-                            <h3 className="text-xl font-semibold">Posts</h3>
-                            {/* Render user posts here */}
-                        </div>
-
-                        <div className="mt-8">
-                            <h3 className="text-xl font-semibold">Liked Posts</h3>
-                            {/* Render user posts here */}
                         </div>
                     </div>
                 </>

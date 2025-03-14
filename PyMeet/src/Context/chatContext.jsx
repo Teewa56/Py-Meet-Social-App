@@ -1,93 +1,70 @@
 import { createContext, useState } from "react";
-import PropTypes from 'prop-types';
-import { sendMessage, getLastMessage, editMessage, deleteMessage, getMessages } from "../Services/api";
+import { sendMessage, getMessages, getLastMessages, deleteMessage } from "../Services/api";
+import PropTypes from "prop-types";
 
 const ChatContext = createContext();
-//store the recent chats to localstorage and use them in the recent page.  
-//also update it here to prevent issues.
+
 const ChatProvider = ({ children }) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-    const [error, setError ] = useState(null);
-    const [loading, setLoading] = useState(false);
-
-
-    const SendMessage = async(message) => {
-        setLoading(true);
-        try{
-            const res = await sendMessage(message);
-            const data = await res.json();
-            return data;
-        }catch(error){
-            setError(error.message);
-        }finally{
-            setLoading(false);
-        }
-    };
-
-    const GetLastMessage = async() => {
-        setLoading(true);
-        try {
-            const res = await getLastMessage();
-            const data = await res.json();
-            return data;
-        } catch (error) {
-            setError(error.message);
-        }finally{
-            setLoading(false);
-        }
-    };
-
-    const EditMessage = async(id, message) => {
-        setLoading(true);
-        try {
-            const res = await editMessage(id, message);
-            const data = await res.json();
-            return data;
-        } catch (error) {
-            setError(error.message);
-        }finally{
-            setLoading(false);
-        }
-    }; 
-
-    const DeleteMessage = async(id) => {
-        setLoading(true);
-        try {
-            const res = await deleteMessage(id);
-            const data = await res.json();
-            return data;
-        } catch (error) {
-            setError(error.message);
-        }finally{
-            setLoading(false);
-        } 
-    }
-
-    // Add this function to your ChatProvider
-    const GetMessages = async(userId1, userId2) => {
+  const SendMessage = async (message) => {
     setLoading(true);
     try {
-      const res = await getMessages(userId1, userId2);
-      const data = await res.json();
-      return data;
-    } catch (error) {
-      setError(error.message);
+      await sendMessage(message);
+    } catch (err) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
-  
-  // Add GetMessages to your ChatContext.Provider value
 
-    return(
-        <ChatContext.Provider value={{loading, error, SendMessage, GetLastMessage, EditMessage, DeleteMessage, GetMessages }} >
-            {children}
-        </ChatContext.Provider>
-    )
+  const GetMessages = async (userId1, userId2) => {
+    setLoading(true);
+    try {
+      const { data } = await getMessages(userId1, userId2);
+      return data;
+    } catch (err) {
+      setError(err.message);
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const GetLastMessages = async () => {
+    setLoading(true);
+    try {
+      const { data } = await getLastMessages();
+      return data;
+    } catch (err) {
+      setError(err.message);
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const DeleteMessage = async (messageId) => {
+    setLoading(true);
+    try {
+      await deleteMessage(messageId);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <ChatContext.Provider value={{ SendMessage, GetMessages, GetLastMessages, DeleteMessage, loading, error }}>
+      {children}
+    </ChatContext.Provider>
+  );
 };
 
 ChatProvider.propTypes = {
-    children : PropTypes.node.isRequired,
-}
+  children: PropTypes.node.isRequired,
+};
 
-export { ChatContext, ChatProvider};
+export { ChatContext, ChatProvider };

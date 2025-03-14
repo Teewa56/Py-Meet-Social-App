@@ -3,77 +3,124 @@ const Comment = require("../Models/commentModel");
 const User = require("../Models/userModel");
 
 const commentController = {
-    makeComment : async (req, res) => {
+    makeComment: async (req, res) => {
         try {
-            const { postId, commenterId } = req.params;
-            const { comment } = req.body;
-            const post = await Post.findById({postId});
-            const author = await User.findById({commenterId});
-            const timeStamp = `${new Date().getDay()}, ${new Date().getHours()} : ${new Date().getMinutes()}`;
+            const { postId } = req.params;
+            const { comment, commenterId } = req.body;
+
+            const post = await Post.findById(postId);
+            if (!post) return res.status(400).json({ msg: "Post not found" });
+
+            const timeStamp = new Date().toLocaleTimeString();
+
             const newComment = new Comment({ 
-                commenter : author,
-                commentText : comment,
+                post: postId,  // Fixed missing reference to the post
+                commenter: commenterId,
+                commentText: comment,
                 timeStamp 
             });
-            post.comments.push(postId);
+
+            post.comments.push(newComment._id);
             await newComment.save();
-            res.json({ msg : "Comment made succesfully", comment : { newComment }})
+            await post.save();
+
+            res.json({ msg: "Comment made successfully", comment: newComment });
         } catch (error) {
-            res.status(500).json({ msg : error.message});
+            res.status(500).json({ msg: error.message });
         }
     },
-    likeComment : async (req, res) => {
+
+    likeComment: async (req, res) => {
         try {
-            const { likerId, commentId} = req.params;
+            const { likerId, commentId } = req.params;
             const liker = await User.findById(likerId);
             const comment = await Comment.findById(commentId);
-            if(!liker || !comment) return res.status(400).json({ msg : "User doesnt exixt"});
-            if(comment.commentLikes.includes(likerId)) return res.status(400).json({ msg : "You already liked this post"}); 
-            comment.commentLikes.push(likerId)
-            await Comment.save();
-            res.json({ msg : "Post liked succesfully!"});
+
+            if (!liker) return res.status(400).json({ msg: "User does not exist" });
+            if (!comment) return res.status(400).json({ msg: "Comment not found" });
+
+            if (comment.commentLikes.includes(likerId)) {
+                return res.status(400).json({ msg: "You already liked this comment" });
+            }
+
+            comment.commentLikes.push(likerId);
+            await comment.save();
+            res.json({ msg: "Comment liked successfully!" });
         } catch (error) {
-            res.status(500).json({ msg : error.message});
+            res.status(500).json({ msg: error.message });
         }
     },
-    unlikeComment : async(req, res) => {
+
+    unlikeComment: async (req, res) => {
         try {
             const { unlikerId, commentId } = req.params;
             const comment = await Comment.findById(commentId);
             const unliker = await User.findById(unlikerId);
-            if(!unliker || !comment) return res.status(400).json({ msg : "User doesnt exixt in this group"});
-            comment.commentLikes = comment.commentLikes.filter(id => id.toString() !== commentId);
+
+            if (!unliker) return res.status(400).json({ msg: "User does not exist" });
+            if (!comment) return res.status(400).json({ msg: "Comment not found" });
+
+            comment.commentLikes = comment.commentLikes.filter(id => id.toString() !== unlikerId);
             await comment.save();
-            res.json({ msg : "Post unliked succesfully!"});
+            res.json({ msg: "Comment unliked successfully!" });
         } catch (error) {
-            res.status(500).json({ msg : error.message});
+            res.status(500).json({ msg: error.message });
         }
     },
-    deleteComment : async (req, res) => {
+
+    deleteComment: async (req, res) => {
         try {
             const { deleterId, commentId } = req.body;
-            const deleter = User.findById({deleterId});
-            const commenter =  (Comment.findById({commentId})).commenter;
-            if( deleter !== commenter ) return res.status(400).json({ msg : "You cannot perform this action!"});
-            await Comment.findByIdAndDelete({commentId});
-            res.json({ msg : "Deleted succesfully!"})
+
+            const deleter = await User.findById(deleterId);
+            const comment = await Comment.findById(commentId);
+
+            if (!comment) return res.status(400).json({ msg: "Comment not found" });
+
+            if (comment.commenter.toString() !== deleter._id.toString()) {
+                return res.status(400).json({ msg: "You cannot perform this action!" });
+            }
+
+            await Comment.findByIdAndDelete(commentId);
+            res.json({ msg: "Comment deleted successfully!" });
         } catch (error) {
-            res.status(500).json({ msg : error.message});
+            res.status(500).json({ msg: error.message });
         }
     },
-    editComment: async(req, res) => {
+
+    editComment: async (req, res) => {
         try {
-            const {editerId, commentId } = req.params;
+            const { editerId, commentId } = req.params;
             const { comment } = req.body;
-            const editer = User.findById({editerId});
-            const reqComment = Comment.findById({commentId});
-            const commenter = reqComment.commenter;
-            if( commenter !== editer ) return res.status(400).json({ msg : "You cannot perform this action"});
+
+            const editer = await User.findById(editerId);
+            const reqComment = await Comment.findById(commentId);
+
+            if (!reqComment) return res.status(400).json({ msg: "Comment not found" });
+
+            if (reqComment.commenter.toString() !== editer._id.toString()) {
+                return res.status(400).json({ msg: "You cannot perform this action" });
+            }
+
             reqComment.commentText = comment;
             await reqComment.save();
-            res.json({ msg : "Comment edited succesfully!", comment : {reqComment} })
+
+            res.json({ msg: "Comment edited successfully!", comment: reqComment });
         } catch (error) {
-            res.status(500).json({ msg : error.message});
+            res.status(500).json({ msg: error.message });
+        }
+    },
+
+    getCommentById: async (req, res) => {
+        try {
+            const { commentId } = req.params;
+            const comment = await Comment.findById(commentId).populate("commenter", "userName profilePic");
+
+            if (!comment) return res.status(400).json({ msg: "Comment does not exist" });
+
+            res.json({ msg: "Comment fetched successfully!", comment });
+        } catch (error) {
+            res.status(500).json({ msg: error.message });
         }
     }
 };

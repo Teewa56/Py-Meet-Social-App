@@ -192,7 +192,6 @@ const authController = {
                 if (err) return res.status(400).json({ msg: "Invalid token" });
                 const user = await User.findById(result.id).select("-password")
                     .populate('following followers');
-
                 if (!user) return res.status(400).json({ msg: "User does not exist" });
                 const access_token = createAccessToken({ id: user._id });
                 res.json({

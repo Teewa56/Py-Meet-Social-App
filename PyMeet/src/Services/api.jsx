@@ -44,7 +44,7 @@ export const followUser = (userId, followId) => api.post(`/follow/${followId}`, 
 export const unfollowUser = (userId, unfollowId) => api.post(`/unfollow/${unfollowId}`, { userId });
 export const getFollowing = (userId) => api.get(`/following/${userId}`, { params: { userId } });
 export const getFollowers = (userId) => api.get(`/followers/${userId}`, { params: { userId } });
-export const getUserProfile = (userId) => api.get(`/profile/${userId}`, { params: { userId } });
+export const getUserProfile = (userId) => api.get(`/profile/${userId}`, { params: { userId } } );
 
 // image upload
 export const uploadImage = async (file) => {
@@ -56,31 +56,42 @@ export const uploadImage = async (file) => {
 };
 
 //posts routes
-export const postText = (data, posterId) => api.post(`/${posterId}/postText`, data, { params : { posterId }});
-export const postImage  = (data, posterId) => api.post(`/${posterId}/postImage`, data, {params : {posterId}});
-export const likePost = (likerId, postId) => api.post(`/${postId}/likePost`, {params : {likerId, postId}});
-export const unlikePost = (unlikerId, postId) => api.post(`/${postId}/unlikePost`, { params : { unlikerId, postId}}); 
-export const editPost = (data, postId, editerId) => api.put(`/${postId}/editPost`, data , { params : {postId, editerId}});
-export const deletePost = (deleterId, postId) => api.delete(`/${postId}/deletePost`, { params : {deleterId, postId}});
+export const postText = (postText, posterId) => api.post(`/postText`, {postText, posterId });
+export const postImage  = (data, posterId) => api.post(`/postImage`, {data, posterId});
+export const likePost = (likerId, postId) => api.post(`/likePost/${postId}`, {likerId});
+export const unlikePost = (unlikerId, postId) => api.post(`/unlikePost/${postId}`, {unlikerId}); 
+export const editPost = (data, postId, editerId) => api.put(`/editPost/${postId}`, {data, editerId});
+export const deletePost = (deleterId, postId) => api.delete(`/deletePost/${postId}?deleterId=${deleterId}`);
+export const getPostById = (postId) => api.get(`/getPost/${postId}`);
+
 
 //get all posts
 export const allPosts = () => api.get('/allPosts');
 
-//commentRoutes
-export const makeComment = (postId, commenterId, comment) => api.post(`/${postId}/makeComment`, comment, {params : { commenterId, postId }});
-export const likeComment = (commentId, likerId) => api.post(`/${commentId}/likeComment`, { params : { likerId, commentId }});
-export const unlikeComment = (commentId, unlikerId) => api.post(`/${commentId}/unlikeComment`, { params : { unlikerId, commentId }});
-export const deleteComment = (commentId, deleterId) => api.delete(`/${commentId}/deleteComment`, { params : {commentId, deleterId }});
-export const editComment = (commentId, editerId, comment) => api.put(`/${commentId}/editComment`, comment, {params : {editerId, commentId }});  
+//comments
+export const makeComment = (postId, commenterId, comment) => 
+    api.post(`/${postId}/makeComment`, { commenterId, comment });
 
-//chatRoutes
-export const sendMessage = (message) => api.post('/send', message);
-export const getMessages = (userId1, userId2) => api.get(`/getMessages/${userId1}/${userId2}`, {params : { userId1, userId2 }});
-export const getLastMessage = () => api.get('/getLastMessages');
-export const editMessage = (id, message) => api.put(`/edit/${id}`, message, {params : { id }});
-export const deleteMessage = (id) => api.delete(`/delete/${id}`, {params : {id}});
+export const likeComment = (commentId, userId) => 
+    api.post(`/${commentId}/likeComment`, { userId });
 
-//groupRoutes
+export const unlikeComment = (commentId, userId) => 
+    api.post(`/${commentId}/unlikeComment`, { userId });
+
+export const deleteComment = (commentId, userId) => 
+    api.delete(`/${commentId}/deleteComment`, { data: { userId } });
+
+export const editComment = (commentId, userId, newComment) => 
+    api.put(`/${commentId}/editComment`, { userId, comment: newComment });
+export const getCommentById = (commentId) => api.get(`/${commentId}/getComment`);  
+
+//chats
+export const getMessages = (userId1, userId2) => api.get(`/messages/${userId1}/${userId2}`);
+export const getLastMessages = () => api.get("/messages/last");
+export const sendMessage = (message) => api.post("/messages/send", message);
+export const deleteMessage = (messageId) => api.delete(`/messages/${messageId}`);
+
+//group
 export const createGroup = (data) => api.post('/create', data);
 export const editGroup = (data, groupId, editerId) => api.put(`/edit/${groupId}`, data , {params : {groupId, editerId}})
 export const updateMembers = (data, groupId) => api.put(`/updateMembers/${groupId}`, data, {params : {groupId}})

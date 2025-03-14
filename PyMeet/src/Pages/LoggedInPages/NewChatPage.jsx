@@ -1,32 +1,52 @@
 import { useState } from "react";
-import { Link } from 'react-router-dom';
-import Followers from "../../Components/Following";
-import Following from "../../Components/Followers";
+import Following from "../../Components/Following";
+import Followers from "../../Components/Followers";
 import BackButton from '../../Components/BackButton';
 
-const NewChatPage = () => {
+const NewChatsPage = () => {
+    const [selectedUser, setSelectedUser] = useState(null);
 
-    //add the clicked chat to the recent chats if a message is sent 
-    //redirect to the clicked chat page by using the id OF THE CLICKED follower of follwowing
-    //
+    const handleCheckboxChange = (user) => {
+        setSelectedUser(user); // Set only one user at a time
+    };
 
-    const [showFriends, setShowFriends] = useState(true);
-
-    return(
-        <>
-            <div>
+        return (
+        <div className="p-5">
+            <div className="flex justify-start items-center space-x-3" >
                 <BackButton />
-                <h3>New Chat</h3>
+                <h2 className="text-2xl font-bold" >Start a New Chat</h2>
             </div>
 
-            <div>
-                <div onClick={()=>setShowFriends(true)}>Followers{Followers.length.toString()}</div>
-                <div onClick={()=>setShowFriends(false)}>Following{Following.length.toString()}</div>
-            </div>
-            <Link to='/NewGroupPage' >Create New Group</Link>
-            {showFriends ? <div> <Followers /></div> : <div><Following /></div> }
-        </>
-    )
-}
+            {/* Followers List with Single Selection */}
+            <Followers>
+                {(follower) => (
+                    <label>
+                        <input
+                            type="checkbox"
+                            checked={selectedUser?._id === follower._id}
+                            onChange={() => handleCheckboxChange(follower)}
+                        />
+                        {follower.name}
+                    </label>
+                )}
+            </Followers>
 
-export default NewChatPage;
+            {/* Following List with Single Selection */}
+            <Following>
+                {(following) => (
+                    <label>
+                        <input
+                            type="checkbox"
+                            checked={selectedUser?._id === following._id}
+                            onChange={() => handleCheckboxChange(following)}
+                        />
+                        {following.name}
+                    </label>
+                )}
+            </Following>
+
+        </div>
+    );
+};
+
+export default NewChatsPage;

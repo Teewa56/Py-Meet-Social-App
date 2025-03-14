@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { allPosts } from "../Services/api";
 import Loading from "../Components/Loading";
 import Post from "./Post";
-import { Link } from "react-router-dom";
 
 const Posts = () =>{
 
@@ -28,21 +27,20 @@ const Posts = () =>{
 
     return(
         <>
-            <div>
+            <div >  
                 {posts.length !== 0 ? 
                 ( <div>
-                    {posts.map((post) => (
+                    {posts.map((post) => 
                         <div key={post._id}>
-                            <Link to={`/PostPage/${(post._id)}`} >
-                                <Post post={post} />
-                            </Link>
+                            <Post post={post} />
                         </div>
-                    ))}
+                    )}
                 </div> ) : 
-                (<div>
-                    <p>Nothing here yet</p>
+                (<div className="h-20 flex items-center justify-center">
+                    <p>No posts yet</p>
                 </div>)}
             </div>
+            
         </>
     )
 }

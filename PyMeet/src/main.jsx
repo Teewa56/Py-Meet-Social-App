@@ -6,6 +6,7 @@ import { ThemeProvider } from './Context/ThemeContext.jsx';
 import { UserProvider } from './Context/userContext.jsx';
 import { CommentProvider } from './Context/commentContext.jsx';
 import ErrorBoundary from './Pages/ErrorPages/ErrorBoundary.jsx';
+import { ChatProvider } from './Context/chatContext.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -14,7 +15,9 @@ createRoot(document.getElementById('root')).render(
         <ThemeProvider>
             <CommentProvider>
               <ErrorBoundary>
-                <App />
+                <ChatProvider>                    
+                  <App />
+                </ChatProvider>
               </ErrorBoundary>
             </CommentProvider >
         </ThemeProvider>

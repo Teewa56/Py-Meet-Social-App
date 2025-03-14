@@ -4,7 +4,7 @@ import {
   markNotification,
   deleteNotification,
 } from "../Services/api"; 
-import { socket, sendNotification } from "../Services/socket.io-client"; 
+import { socket } from "../Services/socket.io-client"; 
 import PropTypes from 'prop-types';
 
 const NotificationContext = createContext();

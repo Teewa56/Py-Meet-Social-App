@@ -1,93 +1,82 @@
-// ChatWindow.jsx - Component to display and send messages
-import { useState, useRef, useEffect, useContext } from 'react';
-import PropTypes from 'prop-types';
-import { ChatContext } from '../../Context/chatContext';
-import { socket, sendMessage } from '../../Services/socket.io-client';
+import { useState, useEffect, useContext } from "react";
+import PropTypes from "prop-types";
+import { useParams } from "react-router-dom";
+import { ChatContext } from "../../Context/chatContext";
+import { socket } from "../../Services/socket.io-client";
 
-const Chat = ({ selectedUser, messages, setMessages }) => {
-  const [newMessage, setNewMessage] = useState('');
-  const messagesEndRef = useRef(null);
-  const { SendMessage } = useContext(ChatContext);
-  const currentUser = JSON.parse(localStorage.getItem('user'));
-  
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-  
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-  
-  const handleSendMessage = async (e) => {
-    e.preventDefault();
-    if (!newMessage.trim() || !selectedUser) return;
-    
-    const messageData = {
-      senderId: currentUser._id,
-      recipientId: selectedUser.id,
-      content: newMessage,
-      timestamp: new Date()
+const Chat = ({ selectedUser }) => {
+    const { GetMessages, SendMessage } = useContext(ChatContext);
+    const { receiverId } = useParams();
+    const [messages, setMessages] = useState([]);
+    const [newMessage, setNewMessage] = useState("")
+    const receiver = selectedUser || { _id: receiverId, name: `User ${receiverId}` };
+
+    useEffect(() => {
+        if (receiverId) {
+            const fetchMessages = async () => {
+                try {
+                    const user = JSON.parse(localStorage.getItem("user"));
+                    const data = await GetMessages(user._id, receiverId);
+                    setMessages(data);
+                } catch (error) {
+                    console.error("Error fetching messages:", error);
+                }
+            };
+            fetchMessages();
+        }
+    }, [receiverId, GetMessages]);
+
+    const handleSendMessage = async () => {
+        if (newMessage.trim() === "" || !receiver._id) return;
+        const user = JSON.parse(localStorage.getItem("user"));
+
+        const messageData = {
+            senderId: user._id,
+            receiverId: receiver._id,
+            content: newMessage,
+        };
+
+        await SendMessage(messageData);
+        socket.emit("sendMessage", messageData);
+        setMessages((prev) => [...prev, messageData]);
+        setNewMessage("");
     };
-    
-    // Add message to local state immediately for UI responsiveness
-    setMessages(prev => [...prev, messageData]);
-    
-    // Send through socket
-    socket.emit("sendMessage", messageData);
-    
-    // Also save to database
-    await SendMessage(messageData);
-    
-    // Clear input
-    setNewMessage('');
-  };
-  
-  if (!selectedUser) {
+
+    useEffect(() => {
+        socket.on("receiveMessage", (newMsg) => {
+            setMessages((prev) => [...prev, newMsg]);
+        });
+
+        return () => socket.off("receiveMessage");
+    }, []);
+
     return (
-      <div className="chat-window empty-state">
-        <p>Select a user to start chatting</p>
-      </div>
-    );
-  }
-  
-  return (
-    <div className="chat-window">
-      <div className="chat-header">
-        <h2>Chat with {selectedUser.name}</h2>
-      </div>
-      
-      <div className="messages-container">
-        {messages.map((msg, index) => (
-          <div 
-            key={index}
-            className={`message ${msg.senderId === currentUser._id ? 'sent' : 'received'}`}
-          >
-            <div className="message-content">{msg.content}</div>
-            <div className="message-time">
-              {new Date(msg.timestamp).toLocaleTimeString()}
+        <div className="chat-container p-5">
+            <h2>Chat with {receiver.name || "Select a user"}</h2>
+            <div className="messages">
+                {messages.map((msg, index) => (
+                    <div key={index} className={`message ${msg.senderId === receiver._id ? "received" : "sent"}`}>
+                        {msg.content}
+                    </div>
+                ))}
             </div>
-          </div>
-        ))}
-        <div ref={messagesEndRef} />
-      </div>
-      
-      <form className="message-input" onSubmit={handleSendMessage}>
-        <input
-          type="text"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          placeholder="Type a message..."
-        />
-        <button type="submit">Send</button>
-      </form>
-    </div>
-  );
+            <input 
+                type="text" 
+                value={newMessage} 
+                onChange={(e) => setNewMessage(e.target.value)} 
+                placeholder="Type a message..."
+            />
+            <button onClick={handleSendMessage}>Send</button>
+        </div>
+    );
 };
 
+// **PropTypes Validation**
 Chat.propTypes = {
-  selectedUser: PropTypes.object,
-  messages: PropTypes.array.isRequired,
-  setMessages: PropTypes.func.isRequired
+    selectedUser: PropTypes.shape({
+        _id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+    }),
 };
 
 export default Chat;

@@ -10,7 +10,7 @@ const IntroPage = () => {
                         <p className="text-6xl font-bold text-wheat font-calibri">PiMeet</p>
                     </>
                 </div>
-                <div className="mb-8">
+                <div className="mb-6">
                     <p className="text-center text-2xl">Connect With Family And Friends Like You Always Do</p>
                 </div>
                 <Link to="/SignUpPage" className="absolute bottom-5 left-1/2 transform -translate-x-1/2 bg-black py-3 px-8 rounded-full text-white text-2xl no-underline">

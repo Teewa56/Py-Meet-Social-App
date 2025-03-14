@@ -17,8 +17,8 @@ const notificationRoutes = require('./Routes/NotificationRoutes');
 const connectDB = require('./DB/dbConfig');
 
 const app = express();
-const server = http.createServer(app); // Create HTTP server
-const io = socket.init(server); // Initialize Socket.IO
+const server = http.createServer(app);
+const io = socket.init(server); 
 
 // Middleware
 app.use(helmet());

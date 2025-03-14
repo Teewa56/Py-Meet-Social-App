@@ -77,7 +77,7 @@ const userctrl = {
     },
     getUserProfile: async (req, res) => {
         try {
-            const userId = req.params.userId; 
+            const userId = req.params.userId;
             const user = await User.findById(userId);
             if (!user) {
                 return res.status(404).json({ msg: 'User not found' });

@@ -1,105 +1,77 @@
-import { useState, useContext } from 'react';
-import { PostContext } from '../Context/postContext';
+import { useState, useContext, useEffect } from "react";
+import { PostContext } from "../Context/postContext";
 import Loading from "../Components/Loading";
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { getPostById } from "../Services/api";
+import PropTypes from 'prop-types';
 
-const ImagePost = () => {
-    const [data, setData] = useState({ postImage : "", postImageCaption : ""});
+const ImagePost = ({ postId }) => {
+    const [data, setData] = useState({ postImage: "", postImageCaption: "" });
     const [imgPostPreview, setImgPostPreview] = useState(null);
-    const { PostImage, error, loading } = useContext(PostContext);
-    const poster = JSON.parse(localStorage.getItem('user'));
-    const posterId = poster._id;
+    const { PostImage, EditPost, loading, error } = useContext(PostContext);
     const navigate = useNavigate();
+    const poster = JSON.parse(localStorage.getItem("user"));
+    const posterId = poster?._id;
+    const [isEditing, setIsEditing] = useState(false);
 
-    const isImage = (file) => {
-        const fileType = file['type'];
-        const validImageTypes = ['image/jpg', "image/jpeg", "image/png", "image/gif"];
-        return validImageTypes.includes(fileType);
-    }
-
-    //useeffect to get the posts from local storage
-    //set the informationto theh default ones 
-    //navigate to the homepage
-
-    const handlePostImageChange = (e) => {
-        const file = e.target.files[0];
-        if (isImage(file)) {
-            const fileReader = new FileReader();
-            fileReader.onload = () => {
-                setData({ ...data, postImage: file });
-                setImgPostPreview(fileReader.result);
+    useEffect(() => {
+        if (!postId) return;
+        const fetchPostData = async () => {
+            try {
+                const res = await getPostById(postId);
+                setData(res.data);
+                setImgPostPreview(res.data.postImage);
+                setIsEditing(true);
+            } catch (error) {
+                console.error("Error fetching post data:", error);
             }
-            fileReader.readAsDataURL(file);
-        } else {
-            alert('Please upload a valid image file (jpg, jpeg, png, gif)');
-            return;
-        }
-    };
-    
+        };
+        fetchPostData();
+    }, [postId]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!data.postImage || !data.postImageCaption) return;
-    
-        const formData = new FormData();
-        formData.append('file', data.postImage);
-        formData.append('upload_preset', 'pymeet');
-        
-        try {
-            const res = await axios.post(`https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`, formData);
-            const imgUrl = res.data.secure_url;
-            setData({ ...data, postImage: imgUrl })
-            await PostImage(data, posterId);
-            navigate("/")
-        } catch (error) {
-            console.error('Error uploading image to Cloudinary:', error);
-        }
-    }
-    
-    if (loading) return <Loading />
 
-    return (
-        <>
-            {error && <div className="text-red-500"><p>{error}</p></div>}
-            <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-                <p className="text-lg font-semibold mb-4">What is on your mind today?</p>
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        <label htmlFor="postImg" className="cursor-pointer flex flex-col items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-20">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15m0-3-3-3m0 0-3 3m3-3V15" />
-                            </svg>
-                        </label>
-                        <input 
-                            type="file"
-                            id='postImg'
-                            className='hidden'
-                            onChange={handlePostImageChange} 
-                            required
-                        />
-                    </div>
-                    {imgPostPreview && (
-                        <div className="mb-4">
-                            <img src={imgPostPreview} alt="Preview" className="w-full h-40 border border-gray-300 rounded-md" />
-                        </div>
-                    )}
-                    <textarea 
-                        placeholder='Caption'
-                        value={data.postImageCaption}
-                        onChange={(e) => setData({ ...data, postImageCaption: e.target.value })} 
-                        className="w-full p-2 mb-4 border border-gray-300 rounded-md"
-                        required
-                    />
-                    <input 
-                        type="submit" 
-                        value="Make Post" 
-                        disabled={!data.postImage || !data.postImageCaption}
-                        className={`w-full p-2 text-white font-semibold rounded-md ${!data.postImage || !data.postImageCaption ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 cursor-pointer'}`}
-                    />
-                </form>
-            </div>
-        </>
-    )
+        if (!isEditing) {
+            const formData = new FormData();
+            formData.append("file", data.postImage);
+            formData.append("upload_preset", "pymeet");
+
+            try {
+                const res = await axios.post(
+                    `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
+                    formData
+                );
+                const imgUrl = res.data.secure_url;
+                const tempData = { ...data, postImage: imgUrl };
+                await PostImage(tempData, posterId);
+            } catch (error) {
+                console.error("Error uploading image:", error);
+            }
+        } else {
+            await EditPost(data, posterId, postId);
+        }
+
+        navigate("/");
+    };
+
+    return loading ? (
+        <Loading />
+    ) : (
+        <form onSubmit={handleSubmit} className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+            {error && <p className="text-red-500">{error}</p>}
+            <input type="file" onChange={(e) => setData({ ...data, postImage: e.target.files[0] })} required />
+            {imgPostPreview && <img src={imgPostPreview} alt="Preview" className="w-full h-40 border border-gray-300 rounded-md" />}
+            <textarea value={data.postImageCaption} onChange={(e) => setData({ ...data, postImageCaption: e.target.value })} required />
+            <button type="submit">{isEditing ? "Save Changes" : "Make Post"}</button>
+        </form>
+    );
+};
+
+ImagePost.propTypes = {
+    postId : PropTypes.node.isRequired
 }
 
 export default ImagePost;

@@ -52,19 +52,20 @@ option{
     display: flex;
     justify-content: space-around;
     align-items: center;
-    height: 10vh;
-    position: sticky;
+    height: 8vh;
+    position: fixed;
+    width: 100%;
     bottom: 0;
+    left: 0;
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(15px); 
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 10px;
-    margin: 20px;
 }
 
 .navbar a {
-    padding: 10px;
+    padding: 5px;
     border-radius: 10px;
     transition: background 0.3s ease;
 }
@@ -81,4 +82,8 @@ option{
 }
 .bg-blue{
     background-color: hsl(180, 100%, 50%);
+}
+
+.post-h{
+    height: 300px;
 }

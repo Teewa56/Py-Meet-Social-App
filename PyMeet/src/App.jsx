@@ -27,10 +27,12 @@ import './App.css';
 import Loading from "./Components/Loading";
 import PropTypes from 'prop-types';
 import SearchedUserProfile from "./Pages/LoggedInPages/SearchedUserProfile";
+import Chat from "./Pages/LoggedInPages/Chat";
 import GroupChat from "./Pages/LoggedInPages/GroupChat";
 import GroupsList from "./Components/GroupsList";
 import Notification from './Pages/LoggedInPages/Notification';
-//in here i will just not allow any users that are offline to use this to prevent error
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ProtectedRoute = ({ children }) => {
     ProtectedRoute.propTypes = {
@@ -60,9 +62,10 @@ const AppContent = () => {
 
     if (initialLoading) return <Loading />;
 
-    const showNavbar = ["/", "/PostsPage", "/ChatsGroupsPage", "/Friends", "/UserProfile"].includes(location.pathname);
+    const showNavbar = ["/", "/PostsPage", "/Chats", "/Friends", "/UserProfile"].includes(location.pathname);
 
-    return (
+    return (<>
+        <ToastContainer position="top-right" autoClose={3000} />
         <div style={{
             height: "100vh",
             overflowY: "auto",
@@ -76,7 +79,8 @@ const AppContent = () => {
                 <Route path="/LoginPage" element={<LoginPage />} />
                 <Route path="/SignUpPage" element={<SignUpPage />} />
                 <Route path="/AboutPage" element={<ProtectedRoute><AboutPage /></ProtectedRoute>} />
-                <Route path="/ChatsGroupsPage" element={<ProtectedRoute><ChatsGroupsPage /></ProtectedRoute>} />
+                <Route path="/Chats" element={<ProtectedRoute><ChatsGroupsPage /></ProtectedRoute>} />
+                <Route path='/Chat/:userId ' element={<ProtectedRoute><Chat /></ProtectedRoute>} />
                 <Route path="/DeleteAccountPage" element={<ProtectedRoute><DeleteAccountPage /></ProtectedRoute>} />
                 <Route path="/EditProfilePage" element={<ProtectedRoute><EditProfilePage /></ProtectedRoute>} />
                 <Route path="/Friends" element={<ProtectedRoute><FriendsPage /></ProtectedRoute>} />
@@ -100,6 +104,7 @@ const AppContent = () => {
             </Routes>
             {user && showNavbar && <Navbar />}
         </div>
+        </>
     );
 };
 

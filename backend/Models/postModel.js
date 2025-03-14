@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
 const postSchema = new mongoose.Schema({
-    PostText : {type : String, maxLength : 200},
-    PostImage : String,
+    postText : {type : String, maxLength : 200},
+    postImage : String,
     postImageCaption : String,
     author : [{type: mongoose.Schema.Types.ObjectId, ref : "User", }],
     postLikes: [{type : mongoose.Schema.Types.ObjectId, ref : "User"}],

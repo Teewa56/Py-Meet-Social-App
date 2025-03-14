@@ -1,10 +1,9 @@
-// UsersList.jsx - Component to display active users and recent chats
 import PropTypes from 'prop-types';
 
-const UsersList = ({ activeUsers, onSelectUser, selectedUser }) => {
+const ChatsList = ({ activeUsers, onSelectUser, selectedUser }) => {
   return (
     <div className="users-list">
-      <h2>Active Users</h2>
+      <h2 className='font-bold text-2xl' >Recent Chats</h2>
       <div className="active-users">
         {activeUsers.map(userId => (
           <div 
@@ -17,17 +16,14 @@ const UsersList = ({ activeUsers, onSelectUser, selectedUser }) => {
           </div>
         ))}
       </div>
-      
-      <h2>Recent Chats</h2>
-      {/* Display recent chats here */}
     </div>
   );
 };
 
-UsersList.propTypes = {
+ChatsList.propTypes = {
   activeUsers: PropTypes.array.isRequired,
   onSelectUser: PropTypes.func.isRequired,
   selectedUser: PropTypes.object
 };
 
-export default UsersList;
+export default ChatsList;

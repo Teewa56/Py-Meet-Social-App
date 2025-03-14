@@ -58,7 +58,7 @@ const SearchedUserProfile = () => {
     };
 
     const handleNavigate = () => {
-        navigate(`/Chats/${userId}/${followId}`);
+        navigate(`/Chat/${followId}`);
     };
 
     if (loading) return <Loading />;
@@ -136,12 +136,6 @@ const SearchedUserProfile = () => {
                             <p className="text-gray-600"><strong>Email:</strong> {user.email || "N/A"}</p>
                             <p className="text-gray-600"><strong>Gender:</strong> {user.gender || "N/A"}</p>
                             <p className="text-gray-600"><strong>Occupation:</strong> {user.occupation || "N/A"}</p>
-                        </div>
-
-                        {/* Posts Section */}
-                        <div className="mt-6">
-                            <h2 className="text-xl font-semibold border-b pb-2">Posts</h2>
-                            <p className="text-gray-500 text-center mt-2">No posts yet.</p>
                         </div>
                     </>
                 )}

@@ -1,53 +1,39 @@
-import { useContext, useEffect, useState } from 'react';
-import { ChatContext } from '../../Context/chatContext';
-import UsersList from '../../Components/UsersList';
-import Chat from './Chat';
+import { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { ChatContext } from "../../Context/chatContext";
+import ChatList from "../../Components/ChatsList";
+import NewchatBtn from '../../Components/NewChatBtn';
 
 const ChatsGroupPage = () => {
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [activeUsers, setActiveUsers] = useState([]);
-  const [messages, setMessages] = useState([]);
-  const { GetLastMessage } = useContext(ChatContext);
-  
-  useEffect(() => {
-    // Load initial data
-    loadRecentChats();
-    
-  }, []);
-  
-  const loadRecentChats = async () => {
-    const data = await GetLastMessage();
-    // Process and organize your recent chats here
-  };
-  
-  const handleUserSelect = (user) => {
-    setSelectedUser(user);
-    // Load chat history with this user
-    loadChatHistory(user.id);
-  };
-  
-  const loadChatHistory = async (userId) => {
-    // Implement API call to get messages with selected user
-    const currentUserId = JSON.parse(localStorage.getItem('user'))._id;
-    // You'll need to implement a getMessages function in your context
-    // const chatHistory = await getMessages(currentUserId, userId);
-    // setMessages(chatHistory);
-  };
-  
-  return (
-    <div className="chat-layout">
-      <UsersList 
-        activeUsers={activeUsers}
-        onSelectUser={handleUserSelect}
-        selectedUser={selectedUser}
-      />
-      <Chat 
-        selectedUser={selectedUser}
-        messages={messages}
-        setMessages={setMessages}
-      />
-    </div>
-  );
+    const [recentChats, setRecentChats] = useState([]);
+    const { GetLastMessages } = useContext(ChatContext);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const loadRecentChats = async () => {
+            try {
+                const data = await GetLastMessages();
+                console.log("Fetched active users:", data);
+                setRecentChats(data);
+            } catch (error) {
+                console.error("Error loading recent chats:", error);
+            }
+        };
+        loadRecentChats();
+    }, []);
+
+    const handleSelectUser = (user) => {
+        navigate(`/Chat/${user._id}`);
+    };
+
+    return (
+        <div className="chat-layout p-3">
+            <h2 className="text-2xl font-bold">Active Users</h2>
+            {recentChats.length === 0 ? <p>No users found</p> : null}
+            <ChatList activeUsers={recentChats} onSelectUser={handleSelectUser} />
+            <NewchatBtn />
+        </div>
+    );
 };
 
 export default ChatsGroupPage;
